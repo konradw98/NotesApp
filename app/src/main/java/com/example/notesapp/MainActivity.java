@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
    static ArrayList<String> notes = new ArrayList<>();
    static ArrayAdapter arrayAdapter;
+    SharedPreferences sharedPreferences;
 
 
     @Override
@@ -31,8 +32,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        sharedPreferences=getApplicationContext().getSharedPreferences("com.example.notesapp", Context.MODE_PRIVATE);
+
+
+        HashSet<String> set = (HashSet<String>)sharedPreferences.getStringSet("notes",null);
+        if(set==null){
+            notes.add("Example Note");
+        } else {
+            notes=new ArrayList(set);
+        }
+
         ListView listView= findViewById(R.id.listView);
-        notes.add("Example Notes");
+
  
 
         arrayAdapter= new ArrayAdapter(this, android.R.layout.simple_gallery_item, notes);
@@ -60,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int which) {
                                 notes.remove(itemToDelete);
                                 arrayAdapter.notifyDataSetChanged();
-                                SharedPreferences sharedPreferences=getApplicationContext().getSharedPreferences("com.example.notesapp", Context.MODE_PRIVATE);
                                 HashSet<String> set= new HashSet<>(MainActivity.notes);
                                 sharedPreferences.edit().putStringSet("notes",set).apply();
                             }
